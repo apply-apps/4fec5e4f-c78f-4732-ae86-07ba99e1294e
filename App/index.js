@@ -6,17 +6,16 @@ import { SafeAreaView, StyleSheet, Text, TextInput, Button, FlatList, View, Touc
 
 export default function App() {
     const [items, setItems] = useState([]);
-    const [text, setText] = useState('');
+    const [input, setInput] = useState('');
 
-    const handleAddItem = () => {
-        if (text !== '') {
-            setItems([...items, { key: Math.random().toString(), text }]);
-            setText('');
-        }
+    const addItem = () => {
+        if (input.trim() === '') return;
+        setItems([...items, { id: Date.now().toString(), title: input }]);
+        setInput('');
     };
 
-    const handleRemoveItem = (key) => {
-        setItems(items.filter(item => item.key !== key));
+    const deleteItem = (id) => {
+        setItems(items.filter(item => item.id !== id));
     };
 
     return (
@@ -24,24 +23,23 @@ export default function App() {
             <Text style={styles.title}>Shopping List</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Add a new item"
-                value={text}
-                onChangeText={setText}
+                placeholder="Add new item"
+                value={input}
+                onChangeText={setInput}
             />
-            <Button
-                title="Add Item"
-                onPress={handleAddItem}
-            />
+            <Button title="Add" onPress={addItem} />
             <FlatList
                 data={items}
                 renderItem={({ item }) => (
                     <View style={styles.itemContainer}>
-                        <Text style={styles.itemText}>{item.text}</Text>
-                        <TouchableOpacity onPress={() => handleRemoveItem(item.key)}>
-                            <Text style={styles.removeItem}>X</Text>
+                        <Text style={styles.itemText}>{item.title}</Text>
+                        <TouchableOpacity onPress={() => deleteItem(item.id)} style={styles.deleteButton}>
+                            <Text style={styles.deleteButtonText}>X</Text>
                         </TouchableOpacity>
                     </View>
                 )}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={styles.list}
             />
         </SafeAreaView>
     );
@@ -50,9 +48,9 @@ export default function App() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 50,
+        paddingTop: 20,
         paddingHorizontal: 20,
-        backgroundColor: '#f8f8f8',
+        backgroundColor: '#FFFFFF',
     },
     title: {
         fontSize: 24,
@@ -61,27 +59,32 @@ const styles = StyleSheet.create({
     },
     input: {
         padding: 10,
-        borderRadius: 10,
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: '#CCCCCC',
+        borderRadius: 5,
         marginBottom: 10,
-        backgroundColor: 'white',
+        width: '100%',
+    },
+    list: {
+        marginTop: 20,
     },
     itemContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 10,
-        borderRadius: 10,
-        backgroundColor: '#e0e0e0',
-        marginBottom: 10,
+        padding: 15,
+        borderBottomWidth: 1,
+        borderColor: '#CCCCCC',
     },
     itemText: {
         fontSize: 18,
     },
-    removeItem: {
+    deleteButton: {
+        backgroundColor: '#FF6347',
+        paddingHorizontal: 10,
+        borderRadius: 5,
+    },
+    deleteButtonText: {
+        color: '#FFFFFF',
         fontSize: 18,
-        color: 'red',
-        fontWeight: 'bold',
     },
 });
